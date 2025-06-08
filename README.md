@@ -1,5 +1,10 @@
 # MNIST Solver
 
+Watch the video tutorial: 
+
+[Portuguese Version](https://drive.google.com/file/d/1it3432Ej-O-cSWLGwf0YwDMscI4iJnLb/view?usp=sharing).
+[English Version](https://drive.google.com/file/d/1qZbmIKdIAw6m02JFhiIlg-XbeSS595C6/view?usp=sharing).
+
 This is a simple command-line application to solve the **MNIST handwritten digit classification** problem using two different machine learning approaches:
 
 - **Artificial Neural Network (ANN)**
