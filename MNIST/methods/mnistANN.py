@@ -1,15 +1,27 @@
-import mnistDATA as data
-import mnistPLOT as plot
+import language
+
+if language.language == 'pt':
+    import messages.messagesPT as msg
+
+else:
+    import messages.messagesEN as msg
+
+import functionalities.mnistDATA as data
+import functionalities.mnistPLOT as plot
 
 from sklearn.neural_network import MLPClassifier
 from sklearn.preprocessing import StandardScaler
 
 import time
 
+import warnings
+from sklearn.exceptions import ConvergenceWarning
+warnings.filterwarnings("ignore", category=ConvergenceWarning)
+
 def shortAnn(activation, solver, nHiddenLayers):
     start = time.perf_counter()
 
-    print("Criando o modelo...\n")
+    print(msg.CREATING)
         
     xTrain, xTest, yTrain, yTest = data.getXY(0.15, 1)
     scaler = StandardScaler()
@@ -18,36 +30,36 @@ def shortAnn(activation, solver, nHiddenLayers):
     
     layers = list(map(int, nHiddenLayers.split()))
 
-    model = MLPClassifier(hidden_layer_sizes=layers, solver=solver, activation=activation, max_iter=50, verbose=1, random_state=1)
+    model = MLPClassifier(hidden_layer_sizes=layers, solver=solver, activation=activation, max_iter=50, verbose=False, random_state=1)
     
-    print("Modelo criado!\n")
-    print("Treinando...\n")
+    print(msg.CREATED)
+    print(msg.SHORT_TRAINING)
     
     model.fit(xTrain, yTrain)
 
-    print("Pronto!\n")
-    print("Training set score:", model.score(xTrain, yTrain))
-    print("Testing set score:", model.score(xTest, yTest))  
+    print(msg.DONE)
+    print(msg.TRAINING_SCORE, model.score(xTrain, yTrain))
+    print(msg.TESTING_SCORE, model.score(xTest, yTest))
 
     index = 0
     test_digit = xTest[index].reshape(1, -1)
     preds = model.predict(xTest)
     
-    print("Aqui vão alguns exemplos de dígitos!\n")
-    print("Feche a imagem para prosseguir.\n")
+    print(msg.DIGITS_PLOT)
+    print(msg.CLOSE_IMG)
     plot.plotDigits(xTest=xTest, model=model, yTest=yTest)
 
-    print("Aqui vai o Confusion Plot!\n")
-    print("Feche a imagem para prosseguir.\n")
+    print(msg.CONFUSION_PLOT)
+    print(msg.CLOSE_IMG)
     plot.plotConfusion(yTest=yTest, preds=preds)
 
     end = time.perf_counter()
-    print(f"Tempo Total: {end - start:.2f} segundos")
+    print(f"Elapsed Time: {end - start:.2f} seconds")
 
 def longANN():
     start = time.perf_counter()
 
-    print("Criando o modelo...")
+    print(msg.CREATING)
 
     activations = ['identity', 'logistic', 'tanh', 'relu']
     solvers = ['lbfgs', 'sgd', 'adam']
@@ -63,21 +75,19 @@ def longANN():
 
     results = []
 
-    print("Iniciando os testes. Se acomode porque isso vai demorar!")
-    j = 0
+    print(msg.CREATED)
+    print(msg.LONG_TRAINING)
+    j = 1
     for solver in solvers:
         for hiddenLayer in hiddenLayers:
             for activation in activations:
-                model = MLPClassifier(hidden_layer_sizes=hiddenLayer, solver=solver, activation=activation, max_iter=50, verbose=False, random_state=1)
+                model = MLPClassifier(hidden_layer_sizes=hiddenLayer, solver=solver, activation=activation, max_iter=100, verbose=False, random_state=1)
                 model.fit(xTrain, yTrain)
 
                 score = model.score(xTest, yTest)
 
-                print("---------------------------------------")
-                print(f"Test {j}")
-                print(f"Model: {model}, Solver: {solver}, Layers: {hiddenLayer}")
-                print("Training set score:", model.score(xTrain, yTrain))
-                print("Testing set score:", score)
+                print(msg.LINE)
+                print(msg.ACTIVE_TESTING(j=j, solver=solver, hiddenLayer=hiddenLayer, activation=activation))
 
                 results.append((model, solver, hiddenLayer, score))
 
@@ -93,8 +103,8 @@ def longANN():
 
     plot.plotConfusion(yTest=yTest, preds=bestPred)
 
-    print("Estes são os resultados de todos os testes:")
+    print(msg.FINAL_RESULTS)
     print(results)
 
     end = time.perf_counter()
-    print(f"Tempo Total: {end - start:.2f} segundos")
+    print(f"Elapsed Time: {end - start:.2f} seconds")

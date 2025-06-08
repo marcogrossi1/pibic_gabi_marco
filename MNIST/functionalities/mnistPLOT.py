@@ -1,6 +1,7 @@
 from sklearn.metrics import confusion_matrix
 
 from numpy import hstack
+from random import random
 
 import seaborn as sns
 import matplotlib.pyplot as plt
@@ -13,7 +14,9 @@ def plotDigits(xTest, model, yTest):
     digit_images = []
     labels = []
 
-    for i in range(num_samples):
+    ranValue = int(random() * 1000)
+
+    for i in range(ranValue, ranValue + num_samples):
         img = xTest_np[i].reshape(28, 28)
         pred = model.predict(xTest_np[i].reshape(1, -1))[0]
         actual = yTest_np[i]
